@@ -115,6 +115,14 @@ nav .container {
   background-color: #e0934b;
   cursor: pointer;
 }
+
+.api-key{
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  padding: 5px;
+}
+
 #main {
   height: 100%;
 }
