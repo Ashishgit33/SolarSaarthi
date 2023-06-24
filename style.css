@@ -67,7 +67,7 @@ nav .container {
 }
 
 .location-form {
-  display: flex;
+  display: none;
   flex-direction: column;
   background-color: #f6f8fa;
   align-items: center;

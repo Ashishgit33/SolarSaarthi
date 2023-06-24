@@ -1,4 +1,5 @@
 let map, marker;
+let locationForm = document.querySelector('.location-form');
 let confirmApiBtn=document.getElementById('confirm-key');
 let drawPolygonBtn = document.querySelector(".draw-polygon");
 let Map, AdvancedMarkerElement;
@@ -22,14 +23,6 @@ function changeLocation() {
   map.setCenter(position);
 }
 
-function createLatLngControl(){
-  let locationForm = document.createElement("div");
-  locationForm.setAttribute("class", "location-form");
-  locationForm.innerHTML='<div class="location-form"><div class="input-group"><label for="longitude">Longitude:</label><input type="text" id="longitude" placeholder="Enter longitude" /></div><div class="input-group">        <label for="latitude">Latitude:</label        ><input type="text" id="latitude" placeholder="Enter latitude" />      </div>      <div class="button-group">        <button class="locate-btn" >Locate</button>      </div>    </div>'
-  let locateBtn=locationForm.querySelector('.locate-btn');
-  locateBtn.addEventListener('click',changeLocation);
-  return locationForm;
-}
 
 function initMap() {
   navigator.geolocation.getCurrentPosition(async (position) => {
@@ -42,7 +35,8 @@ function initMap() {
       streetViewControl: false,
       mapTypeId: "satellite",
     });
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(createLatLngControl());
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationForm);
+    locationForm.style.display = 'flex';
     drawingManager = new google.maps.drawing.DrawingManager({
       drawingMode: google.maps.drawing.OverlayType.POLYGON,
       drawingControl: true,
@@ -88,17 +82,17 @@ function initMap() {
       let topleft = event.latLng;
       let topright = google.maps.geometry.spherical.computeOffset(
         topleft,
-        1.7,
+        1,
         180
       );
       let bottomright = google.maps.geometry.spherical.computeOffset(
         topright,
-        1,
+        1.7,
         90
       );
       let bottomleft = google.maps.geometry.spherical.computeOffset(
         bottomright,
-        1.7,
+        1,
         0
       );
       console.log(topleft.toString());
@@ -133,6 +127,7 @@ function loadMapScript(){
   document.head.appendChild(script);
   document.body.removeChild(document.body.querySelector('.api-form'));
 }
+
 
 confirmApiBtn.addEventListener('click',loadMapScript);
 window.initMap = initMap;
