@@ -74,6 +74,14 @@ nav .container {
   padding: 10px;
 }
 
+.setpanel-form{
+  display: flex;
+  flex-direction: column;
+  background-color: #f6f8fa;
+  align-items: center;
+  padding: 10px;
+  }
+
 
 .input-group {
   display: flex;
