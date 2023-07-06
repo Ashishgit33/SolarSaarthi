@@ -75,12 +75,12 @@ nav .container {
 }
 
 .setpanel-form{
-  display: flex;
+  display: none;
   flex-direction: column;
   background-color: #f6f8fa;
   align-items: center;
   padding: 10px;
-  }
+}
 
 
 .input-group {
@@ -150,8 +150,9 @@ nav .container {
   left: 0;
   transform: translate(-50%, -50%);
   /* Style the bubble. */
+  font-size: 10px;
+  padding: 2px;
   background-color: white;
-  padding: 5px;
   border-radius: 5px;
   font-family: sans-serif;
   overflow-y: auto;
@@ -168,19 +169,6 @@ nav .container {
   left: 0;
 }
 
-/* This element draws the tip. */
-/* .popup-bubble-anchor::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, 0);
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid white;
-} */
 
 /* JavaScript will position this div at the bottom of the popup tip. */
 .popup-container {
