@@ -33,6 +33,38 @@ let addBoundry=(function (){
       activeSolarBoundry.toggleFocus();
     activeSolarBoundry=event.detail;
     activeSolarBoundry.toggleFocus();
+    setpanelForm.querySelector("#length").value=activeSolarBoundry.solarPanelConfig.length;
+    setpanelForm.querySelector("#breath").value=activeSolarBoundry.solarPanelConfig.breath;
+    setpanelForm.querySelector("#vmargin").value=activeSolarBoundry.solarPanelConfig.verticalMargin;
+    setpanelForm.querySelector("#hmargin").value=activeSolarBoundry.solarPanelConfig.horizontalMargin;
+    setpanelForm.style.display="flex"
+  })
+  setpanelForm.querySelector('.delete-btn').addEventListener('click',()=>{
+    if(!activeSolarBoundry) return;
+    activeSolarBoundry.destruct()
+    solarBoundries=solarBoundries.filter((boundry)=>boundry!==activeSolarBoundry)
+    activeSolarBoundry=null;
+    setpanelForm.style.display="none";
+  })
+  setpanelForm.querySelector(".close-form").addEventListener("click",()=>{
+    if(activeSolarBoundry){
+      activeSolarBoundry.toggleFocus();
+      activeSolarBoundry=null;
+    }
+    setpanelForm.style.display="none";
+  })
+  setpanelForm.querySelector(".setpanel-btn").addEventListener('click',()=>{
+    activeSolarBoundry.setSolarPanelConfig({
+      length:setpanelForm.querySelector("#length").value,
+      breath:setpanelForm.querySelector("#breath").value,
+      verticalMargin:setpanelForm.querySelector("#vmargin").value,
+      horizontalMargin:setpanelForm.querySelector("#hmargin").value,
+    })
+    activeSolarBoundry.fillSolarPanels();
+  })
+  setpanelForm.querySelector(".clearpanel-btn").addEventListener("click",()=>{
+    if(activeSolarBoundry)
+      activeSolarBoundry.clearPanels();
   })
   return function(polygon){
     let isIntersecting=solarBoundries.reduce((acc,solarBoundry)=>{
@@ -54,9 +86,9 @@ function getPosition(options) {
 function whenMapReady(map) {
   google.maps.event.addListenerOnce(map, "tilesloaded", function () {
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationForm);
-    map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(setpanelForm);
     locationForm.style.display = "flex";
-    setpanelForm.style.display="flex";
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(setpanelForm);
+    
   });
 }
 
@@ -70,6 +102,11 @@ async function initMap() {
     zoom: 20,
     mapTypeControl: false,
     streetViewControl: false,
+    fullscreenControl: true,
+    zoomControl:true,
+    fullscreenControlOptions: {
+      position: google.maps.ControlPosition.BOTTOM_RIGHT,
+    },
     mapTypeId: "satellite",
   });
 

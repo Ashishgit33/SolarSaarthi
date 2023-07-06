@@ -19,7 +19,9 @@
   <body>
     <nav>
       <div class="container">
-        <div class="logo">SolarSaarthiLabs</div>
+        <div class="logo">
+          <img src="solarsaarthilogo.png" alt="" width="100px" height="50px" />
+        </div>
         <ul class="menu">
           <li><a href="#">Home</a></li>
           <li><a href="/About.html">About Us</a></li>
@@ -54,25 +56,35 @@
     </div>
 
     <div class="setpanel-form">
-      <div class="input-group">
-        <label for="length">Enter length :</label
-        ><input type="number" id="length" placeholder="Enter in Metres" />
+      <div class="boundry-control">
+        <h2>SolarBoundry<span id="boundry-id"></span></h2>
+        <div class="button-group">
+          <button class="delete-btn">Delete</button>
+          <button class="close-form">Close</button>
+        </div>
       </div>
-      <div class="input-group">
-        <label for="breath">Enter breath :</label
-        ><input type="number" id="breath" placeholder="Enter in Metres" />
-      </div>
-      <div class="input-group">
-        <label for="hmargin">Enter Horizontal Margin:</label
-        ><input type="number" id="hmargin" placeholder="Enter in Metres" />
-      </div>
-      <div class="input-group">
-        <label for="vmargin">Enter Vertical Margin:</label
-        ><input type="number" id="vmargin" placeholder="Enter in Metres" />
-      </div>
-
-      <div class="button-group">
-        <button class="setpanel-btn" >Set Panels</button>
+      <div class="solar-panel-config">
+        <h3>Solar panel configuration</h2>
+        <div class="input-group">
+          <label for="length">Enter length :</label
+          ><input type="number" id="length" min="0" placeholder="Enter in Metres" />
+        </div>
+        <div class="input-group">
+          <label for="breath">Enter breath :</label
+          ><input type="number" id="breath" min="0" placeholder="Enter in Metres" />
+        </div>
+        <div class="input-group">
+          <label for="hmargin">Enter Horizontal Margin:</label
+          ><input type="number" id="hmargin" min="0" placeholder="Enter in Metres" />
+        </div>
+        <div class="input-group">
+          <label for="vmargin">Enter Vertical Margin:</label
+          ><input type="number" id="vmargin" min="0" placeholder="Enter in Metres" />
+        </div>
+        <div class="button-group">
+          <button class="clearpanel-btn">Clear Panels</button>
+          <button class="setpanel-btn">Set Panels</button>
+        </div>
       </div>
     </div>
   </body>

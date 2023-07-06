@@ -32,12 +32,6 @@ nav .container {
   padding: 0 20px;
 }
 
-.logo {
-  font-family: "Poppins", sans-serif;
-  font-weight: bold;
-  font-size: 24px;
-}
-
 .menu {
   list-style: none;
   margin: 0;
@@ -80,8 +74,34 @@ nav .container {
   background-color: #f6f8fa;
   align-items: center;
   padding: 10px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
+.boundry-control{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  padding: 5px 0px;
+}
+.boundry-control>h2{
+  color: #f59608;
+  font-family: 'Poppins', sans-serif;
+ 
+}
+.solar-panel-config{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.solar-panel-config>h3{
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  color: #f59608;
+  padding:0.5rem
+}
 
 .input-group {
   display: flex;

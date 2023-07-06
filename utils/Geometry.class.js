@@ -21,6 +21,13 @@ export default class Geomertry {
     });
     return value;
   }
+  static getPolyCenter(polygon){
+    let bounds= new google.maps.LatLngBounds();
+    polygon.getPath().forEach((currPoint)=>{
+      bounds.extend(currPoint);
+    })
+    return bounds.getCenter();
+  }
   static getRectangle(latLng, length, breath) {
     let topleft = latLng;
     let topright = google.maps.geometry.spherical.computeOffset(
