@@ -1,7 +1,7 @@
 import Geomertry from "./Geometry.class.js";
 export default class SolarBoundry {
   #boundry
-  constructor(map, polygon) {
+  constructor(map, polygon,id) {
     this.map = map;
     this.#boundry = polygon;
     this.#boundry.setMap(map);
@@ -19,6 +19,7 @@ export default class SolarBoundry {
         })
       );
     });
+    this.id=id;
     this.isActive = false;
     this.solarPanels = [];
     this.distancePopups = [];
@@ -84,6 +85,14 @@ export default class SolarBoundry {
       solarPanel.setOptions({ clickable: this.isActive })
     );
   }
+  toggleDistance(){
+    this.distancePopups.forEach((popup)=>{
+      if(popup.getMap())
+        popup.setMap(null);
+      else
+        popup.setMap(this.map);
+    })
+  }
   setSolarPanel(latLng) {
     let { length, breath } = this.solarPanelConfig;
     const solarPanel = Geomertry.getRectangle(latLng, length, breath);
@@ -126,7 +135,6 @@ export default class SolarBoundry {
     let bounds = new google.maps.LatLngBounds();
     let { length, breath, horizontalMargin, verticalMargin } =
       this.solarPanelConfig;
-    console.log(this.solarPanelConfig)
     points.forEach(function (coord) {
       bounds.extend(coord);
     });
@@ -150,8 +158,8 @@ export default class SolarBoundry {
       ) {
         let totalSpaceNeed = Geomertry.getRectangle(
           colLatlng,
-          length + verticalMargin,
-          breath + horizontalMargin
+          length,
+          breath
         );
         if (Geomertry.isInsideBoundry(totalSpaceNeed, this.boundry)) {
           this.setSolarPanel(colLatlng);

@@ -65,7 +65,8 @@ nav .container {
   flex-direction: column;
   background-color: #f6f8fa;
   align-items: center;
-  padding: 10px;
+  padding: 1rem;
+  border-bottom-right-radius: 10px;
 }
 
 .setpanel-form{
@@ -73,10 +74,64 @@ nav .container {
   flex-direction: column;
   background-color: #f6f8fa;
   align-items: center;
-  padding: 10px;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  padding: 1rem;
+  border-bottom-left-radius: 10px;
 }
+
+div[class="boundry-config"]{
+  display: flex;
+  flex-direction: row;
+  padding: 0.25rem;
+  width: 100%;
+}
+
+div[class="boundry-config"]>div{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  position: relative;
+  width: 2rem;
+  height: 1rem;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #F4A937;
+  outline: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  box-shadow: inset 0 0 5px rgb(0 0 0 / 50%);
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: 0.5s;
+}
+
+input[type="checkbox"]:checked::before {
+  transform: translateX(100%);
+  background: #fff;
+}
+
+input[type="checkbox"]:checked {
+  background: #00ed64;
+}
+
+label[for="show-distance"]{
+  color: #f59608;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
 
 .boundry-control{
   display: flex;
