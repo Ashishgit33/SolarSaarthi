@@ -7,19 +7,46 @@ export default class Geomertry {
     });
     return value;
   }
-  static isIntersecting(boundry1, boundry2) {
-    let value = false;
-    boundry1.getPath().forEach((currPoint) => {
-      value =
-        value ||
-        google.maps.geometry.poly.containsLocation(currPoint, boundry2);
-    });
-    boundry2.getPath().forEach((currPoint) => {
-      value =
-        value ||
-        google.maps.geometry.poly.containsLocation(currPoint, boundry1);
+  static isIntersectingCircles(circle1,circle2){
+    let center1=circle1.getCenter();
+    let center2=circle2.getCenter();
+    let radius1=circle1.getRadius(),radius2=center2.getRadius();
+    return google.maps.geometry.spherical.computeDistanceBetween(center1,center2)<=radius1+radius2;
+  }
+  static isIntersectingCirlePolygon(circle,polygon){
+    let value=false;
+    value=google.maps.geometry.poly.containsLocation(circle.getCenter(), polygon);
+    polygon.getPath().forEach((point)=>{
+      value=value||google.maps.geometry.spherical.computeDistanceBetween(point,circle.getCenter())<=circle.getRadius();
     });
     return value;
+  }
+  static isIntersectingPolygons(polygon1,polygon2){
+    let value = false;
+    polygon1.getPath().forEach((currPoint) => {
+      value =
+        value ||
+        google.maps.geometry.poly.containsLocation(currPoint, polygon2);
+    });
+    polygon2.getPath().forEach((currPoint) => {
+      value =
+        value ||
+        google.maps.geometry.poly.containsLocation(currPoint, polygon1);
+    });
+    return value;
+  }
+  static isIntersecting(boundry1, boundry2) {
+    if(boundry1 instanceof google.maps.Circle && boundry2 instanceof google.maps.Circle){
+      return Geomertry.isIntersectingCircles(boundry1,boundry2);
+    }
+    if(boundry1 instanceof google.maps.Circle && boundry2 instanceof google.maps.Polygon){
+      if(boundry1 instanceof google.maps.Circle) return Geomertry.isIntersectingCirlePolygon(boundry1,boundry2)
+      else return Geomertry.isIntersectingCirlePolygon(boundry2,boundry1);
+    }
+    if(boundry1 instanceof google.maps.Polygon && boundry2 instanceof google.maps.Polygon){
+      return Geomertry.isIntersectingPolygons(boundry1,boundry2);
+    }
+    throw Error('Cannot find intersection between given boundries');
   }
   static getPolyCenter(polygon) {
     let bounds = new google.maps.LatLngBounds();
@@ -85,5 +112,19 @@ export default class Geomertry {
       headingLine2
     );
     return projection;
+  }
+  static convertRectangleToPolygon(rectangle){
+    if(!rectangle instanceof google.maps.Rectangle) return;
+    let { north, south, east, west } = rectangle.getBounds().toJSON();
+    let topLeft=new google.maps.LatLng(north,west),
+    topRight=new google.maps.LatLng(north,east),
+    bottomright=new google.maps.LatLng(south,east),
+    bottomleft=new google.maps.LatLng(south,west);
+    let path=[topLeft,topRight,bottomright,bottomleft]
+    return new google.maps.Polygon({
+      path,
+      strokeWeight:rectangle.strokeWeight,
+      strokeColor:rectangle.strokeColor,
+    });
   }
 }

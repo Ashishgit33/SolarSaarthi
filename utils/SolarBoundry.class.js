@@ -5,8 +5,12 @@ export default class SolarBoundry {
     this.map = map;
     this.#boundry = polygon;
     this.#boundry.setMap(map);
+    // this.#boundry.setClickable(true);
     this.distancePopups = distancePopups;
     this.distancePopups.forEach((popup)=>popup.setMap(map));
+    this.#boundry.setOptions({
+      clickable:true,
+    })
     this.#boundry.addListener("click", (event) => {
       if (!this.isActive) return;
       let { length, breath } = this.solarPanelConfig;
@@ -31,6 +35,7 @@ export default class SolarBoundry {
       verticalMargin: null,
       power: null,
     };
+    this.obstacles=[]
     document.dispatchEvent(
       new CustomEvent("toggle-active", {
         detail: this,
@@ -49,6 +54,24 @@ export default class SolarBoundry {
       path: this.#boundry.getPath(),
     });
   }
+  setObstacle(obstacle,sideMarkers){
+    this.obstacles.push({
+      obstacle,sideMarkers
+    });
+    obstacle.setOptions({
+      fillColor:'#ff0000',
+      fillOpacity:0.2,
+      zIndex:1
+    })
+    obstacle.setMap(this.map);
+    sideMarkers.forEach((sideMarker)=>sideMarker.setMap(this.map));
+  }
+  clearObstacles(){
+    this.obstacles.forEach(([obstacle,sideMarker])=>{
+      obstacle.setMap(null);
+      sideMarkers.forEach((sideMarker)=>sideMarker.setMap(this.map));
+    })
+  }
   setSolarPanelConfig(config){
     this.solarPanelConfig.length=parseFloat(config.length)
     this.solarPanelConfig.breath=parseFloat(config.breath)
@@ -62,6 +85,9 @@ export default class SolarBoundry {
       fillColor: this.isActive ? "#00ffff" : "#313131",
       fillOpacity: this.isActive ? 0.2 : 0.5,
     });
+    this.#boundry.setOptions({
+      clickable:!this.isActive
+    })
     this.solarPanels.forEach((solarPanel) =>
       solarPanel.setOptions({ clickable: this.isActive })
     );
@@ -119,6 +145,13 @@ export default class SolarBoundry {
     points.forEach(function (coord) {
       bounds.extend(coord);
     });
+    let isIntersectingWithObstacles=(panel)=>{
+      let value=false;
+      this.obstacles.forEach(({obstacle})=>{
+        value=value||Geomertry.isIntersecting(obstacle,panel);
+      })
+      return value;
+    }
     for (
       let rowLatlng = bounds.getSouthWest();
       bounds.contains(rowLatlng);
@@ -142,7 +175,7 @@ export default class SolarBoundry {
           length,
           breath
         );
-        if (Geomertry.isInsideBoundry(totalSpaceNeed, this.boundry)) {
+        if (Geomertry.isInsideBoundry(totalSpaceNeed, this.boundry) && !isIntersectingWithObstacles(totalSpaceNeed)) {
           this.setSolarPanel(colLatlng);
         }
       }
@@ -151,9 +184,11 @@ export default class SolarBoundry {
   destruct(){
     console.log("destruct",this)
     this.clearPanels();
+    this.clearObstacles();
     this.distancePopups.forEach((popup)=>{
       popup.setMap(null);
     })
+
     this.distancePopups=[];
     console.log(this.#boundry.getPath())
     this.#boundry.setMap(null)

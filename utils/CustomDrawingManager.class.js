@@ -5,6 +5,7 @@ export default class CustomDrawingManager {
   constructor(map, configrations) {
     this.map = map;
     this.configrations = configrations;
+    console.log(configrations)
     this.defaultOptions = {
       strokeColor: "#00ffff",
       strokeOpacity: 1,
@@ -83,9 +84,9 @@ export default class CustomDrawingManager {
     let drawLine = new google.maps.Polyline({
       path: [],
       clickable: false,
-      strokeColor: "#00ffff",
+      strokeColor: polygon.strokeColor,
       strokeOpacity: 1,
-      strokeWeight: 3,
+      strokeWeight: 1.5,
       zIndex: 0,
       map: this.map,
     });
