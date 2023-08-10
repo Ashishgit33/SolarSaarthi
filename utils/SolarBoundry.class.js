@@ -1,10 +1,12 @@
 import Geomertry from "./Geometry.class.js";
 export default class SolarBoundry {
   #boundry
-  constructor(map, polygon,id) {
+  constructor(map,polygon,distancePopups,id){
     this.map = map;
     this.#boundry = polygon;
     this.#boundry.setMap(map);
+    this.distancePopups = distancePopups;
+    this.distancePopups.forEach((popup)=>popup.setMap(map));
     this.#boundry.addListener("click", (event) => {
       if (!this.isActive) return;
       let { length, breath } = this.solarPanelConfig;
@@ -22,7 +24,6 @@ export default class SolarBoundry {
     this.id=id;
     this.isActive = false;
     this.solarPanels = [];
-    this.distancePopups = [];
     this.solarPanelConfig = {
       length: null,
       breath: null,
@@ -30,7 +31,6 @@ export default class SolarBoundry {
       verticalMargin: null,
       power: null,
     };
-    this.addDistancePopup();
     document.dispatchEvent(
       new CustomEvent("toggle-active", {
         detail: this,
@@ -54,25 +54,6 @@ export default class SolarBoundry {
     this.solarPanelConfig.breath=parseFloat(config.breath)
     this.solarPanelConfig.verticalMargin=parseFloat(config.horizontalMargin)
     this.solarPanelConfig.horizontalMargin=parseFloat(config.verticalMargin)
-  }
-  async addDistancePopup() {
-    let points = this.boundry.getPath();
-    let length = points.getLength();
-    let TextPopup = (await import("./TextPopup.class.js")).default;
-    for (let i = 0; i < length; ++i) {
-      let distance = google.maps.geometry.spherical.computeDistanceBetween(
-        points.getAt(i),
-        points.getAt((i + 1) % length)
-      );
-      let midPoint = google.maps.geometry.spherical.interpolate(
-        points.getAt(i),
-        points.getAt((i + 1) % length),
-        0.5
-      );
-      let popup = new TextPopup(midPoint, `${distance.toFixed(2)} m`);
-      popup.setMap(this.map);
-      this.distancePopups.push(popup);
-    }
   }
   toggleFocus() {
     this.isActive = !this.isActive;
@@ -174,6 +155,7 @@ export default class SolarBoundry {
       popup.setMap(null);
     })
     this.distancePopups=[];
+    console.log(this.#boundry.getPath())
     this.#boundry.setMap(null)
   }
 }

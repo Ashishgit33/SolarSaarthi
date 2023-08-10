@@ -50,7 +50,7 @@ export default function solarBoundryEventsHandler(map){
       if(!activeSolarBoundry) return;
       activeSolarBoundry.toggleDistance();
     })
-    return function addSolarBoundry(polygon){
+    return function addSolarBoundry(polygon,sideMarkers){
       let isIntersecting=solarBoundries.reduce((acc,solarBoundry)=>{
         acc=acc||Geomertry.isIntersecting(polygon,solarBoundry.boundry);
         return acc; 
@@ -58,7 +58,7 @@ export default function solarBoundryEventsHandler(map){
       if(isIntersecting)
         return
       boundryCount+=1;
-      let newBoundry=new SolarBoundry(map,polygon,boundryCount);
+      let newBoundry=new SolarBoundry(map,polygon,sideMarkers,boundryCount);
       solarBoundries.push(newBoundry);
     }
   }

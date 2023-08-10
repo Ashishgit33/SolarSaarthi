@@ -1,4 +1,5 @@
 import solarBoundryEventsHandler from "./utils/solarBoundryEventsHandler.js";
+import CustomDrawingManager from "./utils/CustomDrawingManager.class.js";
 
 function changeLocation(map) {
   try {
@@ -34,6 +35,7 @@ function whenMapReady(map) {
   });
 }
 
+
 async function initMap() {
   let position = await getPosition();
   let pos = { lat: position.coords.latitude, lng: position.coords.longitude };
@@ -51,38 +53,36 @@ async function initMap() {
     },
     mapTypeId: "satellite",
   });
+  let drawingManager=new CustomDrawingManager(map,{
+    // polygonOptions: {
+    //   editable: false,
+    //   draggable: false,
+    //   clickable: true,
+    //   strokeColor: "#00ffff",
+    //   strokeOpacity: 1,
+    //   strokeWeight: 3,
+    //   fillColor: "#00ffff",
+    //   fillOpacity: 0.2,
+    //   zIndex: 0,
+    // },
+  });
+
+  let addBoundry = solarBoundryEventsHandler(map);
+  google.maps.event.addListener(drawingManager,"shapeComplete",(info)=>{
+    console.log(info)
+    info.shape.setMap(null);
+    info.textMarkers.forEach((textMarker)=>textMarker.setMap(null));
+    if(info.shapeType=="polygon"){
+      addBoundry(info.shape,info.textMarkers)
+    }
+    drawingManager.setDrawMode(null);
+  })
+  drawingManager.setDrawMode("rectangle")
+
   locateBtn.addEventListener("click", () => {
     changeLocation(map);
   });
-  let addBoundry = solarBoundryEventsHandler(map);
-  let drawingManager = new google.maps.drawing.DrawingManager({
-    drawingControl: true,
-    drawingControlOptions: {
-      position: google.maps.ControlPosition.TOP_CENTER,
-      drawingModes: [google.maps.drawing.OverlayType.POLYGON],
-    },
-    polygonOptions: {
-      editable: false,
-      draggable: false,
-      clickable: true,
-      strokeColor: "#00ffff",
-      strokeOpacity: 1,
-      strokeWeight: 3,
-      fillColor: "#00ffff",
-      fillOpacity: 0.2,
-      zIndex: 0,
-    },
-    map,
-  });
-  google.maps.event.addListener(
-    drawingManager,
-    "polygoncomplete",
-    function (polygon) {
-      drawingManager.setDrawingMode(null);
-      polygon.setMap(null);
-      addBoundry(polygon);
-    }
-  );
+  window.drawingManager=drawingManager;
   whenMapReady(map);
 }
 

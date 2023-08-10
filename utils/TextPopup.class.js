@@ -30,6 +30,12 @@ export default class TextPopup extends google.maps.OverlayView {
       this.containerDiv.parentElement.removeChild(this.containerDiv);
     }
   }
+  setPosition(position){
+    if(position instanceof google.maps.LatLng ){
+      this.position=position
+    }
+    // this.draw()
+  }
   /** Called each frame when the popup needs to draw itself. */
   draw() {
     const divPosition = this.getProjection().fromLatLngToDivPixel(
