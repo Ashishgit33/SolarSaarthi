@@ -40,8 +40,10 @@ export default class Geomertry {
       return Geomertry.isIntersectingCircles(boundry1,boundry2);
     }
     if(boundry1 instanceof google.maps.Circle && boundry2 instanceof google.maps.Polygon){
-      if(boundry1 instanceof google.maps.Circle) return Geomertry.isIntersectingCirlePolygon(boundry1,boundry2)
-      else return Geomertry.isIntersectingCirlePolygon(boundry2,boundry1);
+      return Geomertry.isIntersectingCirlePolygon(boundry1,boundry2);
+    }
+    if(boundry1 instanceof google.maps.Polygon && boundry2 instanceof google.maps.Circle){
+      return Geomertry.isIntersectingCirlePolygon(boundry2,boundry1);
     }
     if(boundry1 instanceof google.maps.Polygon && boundry2 instanceof google.maps.Polygon){
       return Geomertry.isIntersectingPolygons(boundry1,boundry2);

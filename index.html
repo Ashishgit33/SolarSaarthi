@@ -7,8 +7,14 @@
 <html>
   <head>
     <title>SolarSaarthiLabs</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three/build/three.module.js",
+          "@googlemaps/three": "https://unpkg.com/@googlemaps/three/dist/index.esm.js"
+        }
+      }
+    </script>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
       rel="stylesheet"
@@ -65,6 +71,7 @@
         </div>
         <div class="solar-boundry-form">
           <h3>Solar Boundry</h3>
+
           <div class="input-group" id="draw-boundry-form">
             <label for="draw-options">Add solar boundry with:</label>
             <select name="draw-options" id="shapes">
@@ -72,6 +79,10 @@
               <option value="polygon">polygon</option>
               <option value="rectangle">rectangle</option>
             </select>
+          </div>
+          <div class="input-group">
+            <label for="view3d">View 3d:</label>
+            <input type="checkbox" id="view3d" />
           </div>
           <div class="setpanel-form">
             <div class="boundry-control">

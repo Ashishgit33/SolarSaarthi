@@ -2,15 +2,20 @@ import Geomertry from "./Geometry.class.js";
 export default class CustomDrawingManager {
   #drawMode;
   #unchangableOptions;
-  constructor(map, configrations) {
+  constructor(map, configrations = {}) {
     this.map = map;
-    this.configrations = configrations;
-    console.log(configrations)
-    this.defaultOptions = {
+    this.defaultOptions={
       strokeColor: "#00ffff",
       strokeOpacity: 1,
       strokeWeight: 1.5,
       fillOpacity: 0,
+    }
+    this.configrations = {
+      polygonOptions:this.defaultOptions,
+      rectangleOptions:this.defaultOptions,
+      circleOptions:this.defaultOptions,
+      distanceMarkerVisible: true,
+      ...configrations,
     };
     this.#unchangableOptions = {
       map: this.map,
@@ -29,10 +34,11 @@ export default class CustomDrawingManager {
     L ${rectangleWidth / 2} ${rectangleHeight / 2} 
     L ${-rectangleWidth / 2} ${rectangleHeight / 2} Z
   `;
-
-    // console.log(rectangleSvgPath);
     return new google.maps.Marker({
-      map: this.map,
+      map:
+        this.configrations.distanceMarkerVisible
+          ? this.map
+          : null,
       zIndex: 0,
       icon: {
         path: rectangleSvgPath,
@@ -41,7 +47,7 @@ export default class CustomDrawingManager {
         fillColor: "wheat",
         scale: 1,
       },
-      clickable:false
+      clickable: false,
     });
   }
   getTextLabel(text) {
@@ -51,6 +57,9 @@ export default class CustomDrawingManager {
       fontWeight: "bold",
       fontSize: "8px",
     };
+  }
+  setDistanceMarkerVisibility(boolVal){
+    this.configrations.distanceMarkerVisible=val;
   }
   setDrawMode(drawMode) {
     if (this.#drawMode == drawMode) return;
@@ -77,8 +86,7 @@ export default class CustomDrawingManager {
     let sideMarkers = [];
     let currMarker = null;
     let polygon = new google.maps.Polyline({
-      ...this.defaultOptions,
-      ...(this.configrations.polygonOptions || null),
+      ...this.configrations.polygonOptions,
       ...this.#unchangableOptions,
     });
     let drawLine = new google.maps.Polyline({
@@ -161,8 +169,7 @@ export default class CustomDrawingManager {
       destruct();
       let path = polygon.getPath();
       polygon = new google.maps.Polygon({
-        ...this.defaultOptions,
-        ...(this.configrations.polygonOptions || {}),
+        ...(this.configrations.polygonOptions),
         ...this.#unchangableOptions,
         path,
         map: null,
@@ -193,11 +200,12 @@ export default class CustomDrawingManager {
   #drawRectangle() {
     let topLeft = null,
       topRight = null;
-    let lengthMarker = this.getTextMarker();
-    let breathMarker = this.getTextMarker();
+    let lengthMarkerLeft = this.getTextMarker();
+    let lengthMarkerRight = this.getTextMarker();
+    let breathMarkerUp = this.getTextMarker();
+    let breathMarkerDown = this.getTextMarker();
     let rectangle = new google.maps.Rectangle({
-      ...this.defaultOptions,
-      ...(this.configrations.polygonOptions || null),
+      ...this.configrations.rectangleOptions,
       ...this.#unchangableOptions,
     });
     let moveListener = this.map.addListener("mousemove", (event) => {
@@ -216,20 +224,34 @@ export default class CustomDrawingManager {
         new google.maps.LatLng(south, west),
         new google.maps.LatLng(north, west)
       );
-      let midLengthPoint = google.maps.geometry.spherical.computeOffset(
+      let midLengthPointLeft = google.maps.geometry.spherical.computeOffset(
         new google.maps.LatLng(north, west),
         length / 2,
         180
       );
-      let midBreathPoint = google.maps.geometry.spherical.computeOffset(
+      let midBreathPointUp = google.maps.geometry.spherical.computeOffset(
         new google.maps.LatLng(north, west),
         breath / 2,
         90
       );
-      lengthMarker.setPosition(midLengthPoint);
-      breathMarker.setPosition(midBreathPoint);
-      lengthMarker.setLabel(this.getTextLabel(`${length.toFixed(2)}m`));
-      breathMarker.setLabel(this.getTextLabel(`${breath.toFixed(2)}m`));
+      let midLengthPointRight = google.maps.geometry.spherical.computeOffset(
+        new google.maps.LatLng(north, east),
+        length / 2,
+        180
+      );
+      let midBreathPointDown = google.maps.geometry.spherical.computeOffset(
+        new google.maps.LatLng(south, west),
+        breath / 2,
+        90
+      );
+      lengthMarkerLeft.setPosition(midLengthPointLeft);
+      lengthMarkerRight.setPosition(midLengthPointRight);
+      breathMarkerUp.setPosition(midBreathPointUp);
+      breathMarkerDown.setPosition(midBreathPointDown);
+      lengthMarkerLeft.setLabel(this.getTextLabel(`${length.toFixed(2)}m`));
+      lengthMarkerRight.setLabel(this.getTextLabel(`${length.toFixed(2)}m`));
+      breathMarkerUp.setLabel(this.getTextLabel(`${breath.toFixed(2)}m`));
+      breathMarkerDown.setLabel(this.getTextLabel(`${breath.toFixed(2)}m`));
     });
     let clickListener = this.map.addListener("click", (event) => {
       if (!topLeft) {
@@ -238,8 +260,10 @@ export default class CustomDrawingManager {
       } else {
         destruct();
         this.#shapeComplete(rectangle, "rectangle", [
-          lengthMarker,
-          breathMarker,
+          lengthMarkerLeft,
+          breathMarkerUp,
+          lengthMarkerRight,
+          breathMarkerDown,
         ]);
       }
     });
@@ -256,8 +280,10 @@ export default class CustomDrawingManager {
       clickListener.remove();
       moveListener.remove();
       modeChangeListener.remove();
-      lengthMarker.setMap(null);
-      breathMarker.setMap(null);
+      lengthMarkerLeft.setMap(null);
+      lengthMarkerRight.setMap(null);
+      breathMarkerUp.setMap(null);
+      breathMarkerDown.setMap(null);
       rectangle.setMap(null);
     };
   }
@@ -266,8 +292,7 @@ export default class CustomDrawingManager {
       radius;
     let radiusMarker = this.getTextMarker();
     let circle = new google.maps.Circle({
-      ...this.defaultOptions,
-      ...(this.configrations.polygonOptions || null),
+      ...this.configrations.circleOptions,
       ...this.#unchangableOptions,
     });
     let clickListener = this.map.addListener("click", (event) => {
